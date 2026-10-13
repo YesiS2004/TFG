@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+</head>
+
+<body>
+    
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Clientes{% endblock %}
+
+{% block contenido %}
+
+<main class="contenido">
+
+    <div class="encabezado">
+        <h1>Clientes</h1>
+
+        <div class="acciones-superiores">
+            <a href="{% url 'home' %}" class="boton menu">
+                Volver al menú principal
+            </a>
+
+            <a href="{% url 'registrar_cliente' %}" class="boton nuevo">
+                + Registrar cliente
+            </a>
+        </div>
+    </div>
+
+    <form method="GET" action="{% url 'lista_clientes' %}" class="busqueda-clientes">
+        <div class="busqueda-campo">
+            <input
+                type="search"
+                name="q"
+                value="{{ busqueda }}"
+                placeholder="Buscar por documento, nombre o apellido..."
+                aria-label="Buscar clientes"
+            >
+
+            <button type="submit" class="boton nuevo">
+                Buscar
+            </button>
+
+            {% if busqueda %}
+                <a href="{% url 'lista_clientes' %}" class="boton menu">
+                    Limpiar
+                </a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if messages %}
+        <div class="mensajes">
+            {% for message in messages %}
+                <div class="mensaje-exito">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if pagina.object_list %}
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Documento</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for cliente in pagina %}
+                        <tr>
+                            <td>{{ cliente.nombre }}</td>
+                            <td>{{ cliente.apellido }}</td>
+                            <td>{{ cliente.documento }}</td>
+                            <td>{{ cliente.telefono }}</td>
+                            <td>{{ cliente.email|default:"—" }}</td>
+
+                            <td>
+                                <a
+                                    href="{% url 'editar_cliente' cliente.pk %}"
+                                    class="boton editar">
+                                    Editar
+                                </a>
+                            </td>
+
+                            <td>
+                                <button
+                                    type="button"
+                                    class="boton eliminar"
+                                    data-url="{% url 'eliminar_cliente' cliente.pk %}"
+                                    onclick="abrirConfirmacion(this)">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="paginacion">
+            {% if pagina.has_previous %}
+                <a class="pagina" href="?page=1">Primera</a>
+                <a class="pagina" href="?q={{ busqueda|urlencode }}&page={{ pagina.next_page_number }}">
+                    Anterior
+                </a>
+            {% else %}
+                <span class="pagina deshabilitada">Primera</span>
+                <span class="pagina deshabilitada">Anterior</span>
+            {% endif %}
+
+            {% for numero in pagina.paginator.page_range %}
+                {% if numero == pagina.number %}
+                    <span class="pagina activa">{{ numero }}</span>
+                {% else %}
+                    <a class="pagina" href="?page={{ numero }}">
+                        {{ numero }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            {% if pagina.has_next %}
+                <a class="pagina" href="?page={{ pagina.next_page_number }}">
+                    Siguiente
+                </a>
+                <a class="pagina" href="?page={{ pagina.paginator.num_pages }}">
+                    Última
+                </a>
+            {% else %}
+                <span class="pagina deshabilitada">Siguiente</span>
+                <span class="pagina deshabilitada">Última</span>
+            {% endif %}
+        </div>
+
+        <p class="resumen-paginacion">
+            Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}.
+            Total de clientes: {{ pagina.paginator.count }}.
+        </p>
+
+    {% else %}
+
+        <div class="vacio">
+            <p>Todavía no hay clientes registrados.</p>
+
+            <a href="{% url 'registrar_cliente' %}" class="boton nuevo">
+                Registrar primer cliente
+            </a>
+        </div>
+
+    {% endif %}
+
+</main>
+
+<!-- Ventana personalizada para confirmar la eliminación -->
+<div id="modal-eliminar" class="modal">
+    <div class="modal-contenido">
+
+        <div class="modal-icono">!</div>
+
+        <h2>¿Eliminar cliente?</h2>
+
+        <p>
+            Esta acción eliminará el registro del cliente.
+            ¿Deseas continuar?
+        </p>
+
+        <form method="POST" id="form-confirmar-eliminacion">
+            {% csrf_token %}
+
+            <div class="modal-acciones">
+                <button
+                    type="button"
+                    class="boton cancelar"
+                    onclick="cerrarConfirmacion()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="boton eliminar">
+                    Eliminar
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    const modalEliminar = document.getElementById('modal-eliminar');
+    const formularioEliminar = document.getElementById(
+        'form-confirmar-eliminacion'
+    );
+
+    function abrirConfirmacion(boton) {
+        formularioEliminar.action = boton.dataset.url;
+        modalEliminar.style.display = 'flex';
+    }
+
+    function cerrarConfirmacion() {
+        modalEliminar.style.display = 'none';
+        formularioEliminar.action = '';
+    }
+
+    modalEliminar.addEventListener('click', function(evento) {
+        if (evento.target === modalEliminar) {
+            cerrarConfirmacion();
+        }
+    });
+
+    document.addEventListener('keydown', function(evento) {
+        if (evento.key === 'Escape') {
+            cerrarConfirmacion();
+        }
+    });
+
+    // Ocultar los mensajes de éxito después de 4 segundos.
+    document.querySelectorAll('.mensaje-exito').forEach(function(mensaje) {
+        setTimeout(function() {
+            mensaje.classList.add('ocultar');
+
+            setTimeout(function() {
+                mensaje.remove();
+            }, 500);
+        }, 4000);
+    });
+</script>
+
+{% endblock %}
+
+</body>
+</html>

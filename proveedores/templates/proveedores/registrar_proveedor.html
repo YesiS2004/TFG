@@ -1,0 +1,83 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+
+<main class="contenido">
+
+    {% if messages %}
+        <div class="mensajes">
+            {% for message in messages %}
+                <div class="mensaje-exito">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="encabezado">
+        <h1>{{ titulo }}</h1>
+
+        <div class="acciones-superiores">
+            <a href="{% url 'lista_proveedores' %}" class="boton menu">
+                Volver a proveedores
+            </a>
+        </div>
+    </div>
+
+    <div class="formulario-contenedor">
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="errores-formulario">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for campo in form %}
+                <div class="campo-formulario">
+                    <label for="{{ campo.id_for_label }}">
+                        {{ campo.label }} <span>*</span>
+                    </label>
+
+                    {{ campo }}
+
+                    {% if campo.errors %}
+                        <div class="error-campo">
+                            {% for error in campo.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <p class="texto-obligatorio">* Todos los campos son obligatorios.</p>
+
+            <div class="acciones-formulario">
+                <button type="submit" class="boton nuevo">
+                    {{ texto_boton }}
+                </button>
+
+                <a href="{% url 'lista_proveedores' %}" class="boton menu">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+</main>
+
+<script>
+    document.querySelectorAll('.mensaje-exito').forEach(function(mensaje) {
+        setTimeout(function() {
+            mensaje.classList.add('ocultar');
+            setTimeout(function() {
+                mensaje.remove();
+            }, 500);
+        }, 4000);
+    });
+</script>
+
+{% endblock %}

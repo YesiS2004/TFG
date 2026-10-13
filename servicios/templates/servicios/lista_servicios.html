@@ -1,0 +1,223 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}Servicios{% endblock %}
+
+{% block contenido %}
+
+<main class="contenido">
+
+    {% if messages %}
+        <div class="mensajes">
+            {% for message in messages %}
+                <div class="mensaje-exito">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="encabezado">
+        <h1>Servicios</h1>
+
+        <div class="acciones-superiores">
+            <a href="{% url 'home' %}" class="boton menu">
+                Volver al menú principal
+            </a>
+
+            <a href="{% url 'registrar_servicio' %}" class="boton nuevo">
+                + Registrar servicio
+            </a>
+        </div>
+    </div>
+
+    <form method="GET" action="{% url 'lista_servicios' %}"
+          class="busqueda-clientes">
+        <div class="busqueda-campo">
+            <input type="search" name="q" value="{{ busqueda }}"
+                   placeholder="Buscar por nombre o descripción..."
+                   aria-label="Buscar servicios">
+
+            <button type="submit" class="boton nuevo">Buscar</button>
+
+            {% if busqueda %}
+                <a href="{% url 'lista_servicios' %}"
+                   class="boton menu">Limpiar</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if pagina.object_list %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Duración aproximada</th>
+                        <th>Costo</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for servicio in pagina %}
+                        <tr>
+                            <td>{{ servicio.nombre }}</td>
+
+                            <td>
+                                {% if servicio.descripcion %}
+                                    {{ servicio.descripcion }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>{{ servicio.duracion_horas }} horas</td>
+
+                            <td>Gs. {{ servicio.costo_formateado }}</td>
+
+                            <td>
+                                <a href="{% url 'editar_servicio' servicio.pk %}"
+                                   class="boton editar">
+                                    Editar
+                                </a>
+                            </td>
+
+                            <td>
+                                <button type="button"
+                                        class="boton eliminar"
+                                        data-url="{% url 'eliminar_servicio' servicio.pk %}"
+                                        onclick="abrirConfirmacion(this)">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="paginacion">
+            {% if pagina.has_previous %}
+                <a class="pagina"
+                   href="?q={{ busqueda|urlencode }}&page=1">Primera</a>
+
+                <a class="pagina"
+                   href="?q={{ busqueda|urlencode }}&page={{ pagina.previous_page_number }}">Anterior</a>
+            {% else %}
+                <span class="pagina deshabilitada">Primera</span>
+                <span class="pagina deshabilitada">Anterior</span>
+            {% endif %}
+
+            {% for numero in pagina.paginator.page_range %}
+                {% if numero == pagina.number %}
+                    <span class="pagina activa">{{ numero }}</span>
+                {% else %}
+                    <a class="pagina"
+                       href="?q={{ busqueda|urlencode }}&page={{ numero }}">
+                        {{ numero }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            {% if pagina.has_next %}
+                <a class="pagina"
+                   href="?q={{ busqueda|urlencode }}&page={{ pagina.next_page_number }}">Siguiente</a>
+
+                <a class="pagina"
+                   href="?q={{ busqueda|urlencode }}&page={{ pagina.paginator.num_pages }}">Última</a>
+            {% else %}
+                <span class="pagina deshabilitada">Siguiente</span>
+                <span class="pagina deshabilitada">Última</span>
+            {% endif %}
+        </div>
+
+        <p class="resumen-paginacion">
+            Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}.
+            Total de servicios: {{ pagina.paginator.count }}.
+        </p>
+
+    {% else %}
+        <div class="vacio">
+            {% if busqueda %}
+                <p>No se encontraron servicios con esos datos.</p>
+
+                <a href="{% url 'lista_servicios' %}" class="boton menu">
+                    Ver todos los servicios
+                </a>
+            {% else %}
+                <p>Todavía no hay servicios registrados.</p>
+
+                <a href="{% url 'registrar_servicio' %}" class="boton nuevo">
+                    Registrar primer servicio
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</main>
+
+<div id="modal-eliminar" class="modal">
+    <div class="modal-contenido">
+        <div class="modal-icono">!</div>
+
+        <h2>¿Eliminar servicio?</h2>
+
+        <p>Esta acción eliminará el registro del servicio. ¿Deseas continuar?</p>
+
+        <form method="POST" id="form-confirmar-eliminacion">
+            {% csrf_token %}
+
+            <div class="modal-acciones">
+                <button type="button" class="boton cancelar"
+                        onclick="cerrarConfirmacion()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="boton eliminar">
+                    Eliminar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modalEliminar = document.getElementById('modal-eliminar');
+    const formularioEliminar = document.getElementById(
+        'form-confirmar-eliminacion'
+    );
+
+    function abrirConfirmacion(boton) {
+        formularioEliminar.action = boton.dataset.url;
+        modalEliminar.style.display = 'flex';
+    }
+
+    function cerrarConfirmacion() {
+        modalEliminar.style.display = 'none';
+        formularioEliminar.action = '';
+    }
+
+    modalEliminar.addEventListener('click', function(evento) {
+        if (evento.target === modalEliminar) {
+            cerrarConfirmacion();
+        }
+    });
+
+    document.addEventListener('keydown', function(evento) {
+        if (evento.key === 'Escape') {
+            cerrarConfirmacion();
+        }
+    });
+
+    document.querySelectorAll('.mensaje-exito').forEach(function(mensaje) {
+        setTimeout(function() {
+            mensaje.classList.add('ocultar');
+            setTimeout(function() {
+                mensaje.remove();
+            }, 500);
+        }, 4000);
+    });
+</script>
+
+{% endblock %}

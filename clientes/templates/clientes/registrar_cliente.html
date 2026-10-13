@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar cliente</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #243447;
+        }
+
+        .contenido {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button, .volver {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        button {
+            background: #234f77;
+            color: white;
+        }
+
+        .volver {
+            background: #e5e9ef;
+            color: #243447;
+        }
+
+        .errorlist {
+            color: #b42318;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="contenido">
+        <h1>{{ titulo|default:"Registrar cliente" }}</h1>
+        <p>Completa los datos del cliente.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="campo">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.errors %}
+                        {{ field.errors }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                {{ form.non_field_errors }}
+            {% endif %}
+
+            <div class="acciones">
+                    <button type="submit">
+                        {{ texto_boton|default:"Guardar cliente" }}
+                    </button>
+                <a href="{% url 'lista_clientes' %}" class="volver">
+                    Volver
+                </a>
+            </div>
+        </form>
+    </main>
+
+</body>
+</html>

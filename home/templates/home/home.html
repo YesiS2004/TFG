@@ -55,10 +55,12 @@
         <h2>Taller Mecánico</h2>
 
         <a href="#">Home</a>
-        <a href="#">Clientes</a>
+        <a href="{% url 'lista_clientes' %}">Clientes</a>
+        <a href="{% url 'lista_proveedores' %}">Proveedores</a>
         <a href="#">Vehículos</a>
         <a href="#">Turnos</a>
         <a href="#">Repuestos</a>
+        <a href="{% url 'lista_servicios' %}">Servicios</a>
     </nav>
 
     <main class="content">
