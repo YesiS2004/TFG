@@ -1,19 +1,9 @@
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes</title>
-</head>
-
-<body>
-    
 {% extends 'base.html' %}
-{% load static %}
 
 {% block titulo %}Clientes{% endblock %}
-
+{% block migas %}
+    <a href="{% url 'lista_clientes' %}">Clientes</a>
+{% endblock %}
 {% block contenido %}
 
 <main class="contenido">
@@ -53,16 +43,6 @@
             {% endif %}
         </div>
     </form>
-
-    {% if messages %}
-        <div class="mensajes">
-            {% for message in messages %}
-                <div class="mensaje-exito">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
 
     {% if pagina.object_list %}
 
@@ -114,8 +94,15 @@
 
         <div class="paginacion">
             {% if pagina.has_previous %}
-                <a class="pagina" href="?page=1">Primera</a>
-                <a class="pagina" href="?q={{ busqueda|urlencode }}&page={{ pagina.next_page_number }}">
+                <a
+                    class="pagina"
+                    href="?q={{ busqueda|urlencode }}&page=1">
+                    Primera
+                </a>
+
+                <a
+                    class="pagina"
+                    href="?q={{ busqueda|urlencode }}&page={{ pagina.previous_page_number }}">
                     Anterior
                 </a>
             {% else %}
@@ -127,17 +114,24 @@
                 {% if numero == pagina.number %}
                     <span class="pagina activa">{{ numero }}</span>
                 {% else %}
-                    <a class="pagina" href="?page={{ numero }}">
+                    <a
+                        class="pagina"
+                        href="?q={{ busqueda|urlencode }}&page={{ numero }}">
                         {{ numero }}
                     </a>
                 {% endif %}
             {% endfor %}
 
             {% if pagina.has_next %}
-                <a class="pagina" href="?page={{ pagina.next_page_number }}">
+                <a
+                    class="pagina"
+                    href="?q={{ busqueda|urlencode }}&page={{ pagina.next_page_number }}">
                     Siguiente
                 </a>
-                <a class="pagina" href="?page={{ pagina.paginator.num_pages }}">
+
+                <a
+                    class="pagina"
+                    href="?q={{ busqueda|urlencode }}&page={{ pagina.paginator.num_pages }}">
                     Última
                 </a>
             {% else %}
@@ -154,11 +148,19 @@
     {% else %}
 
         <div class="vacio">
-            <p>Todavía no hay clientes registrados.</p>
+            {% if busqueda %}
+                <p>No se encontraron clientes con esos datos.</p>
 
-            <a href="{% url 'registrar_cliente' %}" class="boton nuevo">
-                Registrar primer cliente
-            </a>
+                <a href="{% url 'lista_clientes' %}" class="boton menu">
+                    Ver todos los clientes
+                </a>
+            {% else %}
+                <p>Todavía no hay clientes registrados.</p>
+
+                <a href="{% url 'registrar_cliente' %}" class="boton nuevo">
+                    Registrar primer cliente
+                </a>
+            {% endif %}
         </div>
 
     {% endif %}
@@ -225,20 +227,6 @@
             cerrarConfirmacion();
         }
     });
-
-    // Ocultar los mensajes de éxito después de 4 segundos.
-    document.querySelectorAll('.mensaje-exito').forEach(function(mensaje) {
-        setTimeout(function() {
-            mensaje.classList.add('ocultar');
-
-            setTimeout(function() {
-                mensaje.remove();
-            }, 500);
-        }, 4000);
-    });
 </script>
 
 {% endblock %}
-
-</body>
-</html>

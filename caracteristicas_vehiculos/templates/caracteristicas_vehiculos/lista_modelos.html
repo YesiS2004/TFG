@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Modelos{% endblock %}
+{% block migas %}
+    <span>Modelos</span>
+{% endblock %}
+{% block contenido %}
+<main class="contenido">
+
+    <div class="encabezado">
+        <h1>Modelos</h1>
+
+        <div class="acciones-superiores">
+            <a href="{% url 'home' %}" class="boton menu">
+                Volver al menú principal
+            </a>
+
+            <a href="{% url 'registrar_modelo' %}" class="boton nuevo">
+                Registrar modelo
+            </a>
+        </div>
+    </div>
+
+    <form method="GET" class="busqueda-clientes">
+        <input
+            type="text"
+            name="q"
+            class="busqueda-campo"
+            placeholder="Buscar modelo o marca..."
+            value="{{ busqueda }}"
+        >
+
+        <button type="submit" class="boton menu">
+            Buscar
+        </button>
+
+        {% if busqueda %}
+            <a href="{% url 'lista_modelos' %}" class="boton menu">
+                Limpiar
+            </a>
+        {% endif %}
+    </form>
+
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Marca</th>
+                    <th>Nombre del modelo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for modelo in pagina %}
+                    <tr>
+                        <td>{{ modelo.id_modelo }}</td>
+                        <td>{{ modelo.marca.nombre_marca }}</td>
+                        <td>{{ modelo.nombre_modelo }}</td>
+                        <td>
+                            <a
+                                href="{% url 'editar_modelo' modelo.id_modelo %}"
+                                class="boton editar"
+                            >
+                                Editar
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="vacio">
+                            No se encontraron modelos registrados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="paginacion">
+
+        {% if pagina.has_previous %}
+            <a
+                href="?q={{ busqueda|urlencode }}&page=1"
+                class="pagina"
+            >Primera</a>
+
+            <a
+                href="?q={{ busqueda|urlencode }}&page={{ pagina.previous_page_number }}"
+                class="pagina"
+            >Anterior</a>
+        {% else %}
+            <span class="pagina deshabilitada">Primera</span>
+            <span class="pagina deshabilitada">Anterior</span>
+        {% endif %}
+
+        {% for numero in pagina.paginator.page_range %}
+            {% if numero == pagina.number %}
+                <span class="pagina activa">{{ numero }}</span>
+            {% else %}
+                <a
+                    href="?q={{ busqueda|urlencode }}&page={{ numero }}"
+                    class="pagina"
+                >{{ numero }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if pagina.has_next %}
+            <a
+                href="?q={{ busqueda|urlencode }}&page={{ pagina.next_page_number }}"
+                class="pagina"
+            >Siguiente</a>
+
+            <a
+                href="?q={{ busqueda|urlencode }}&page={{ pagina.paginator.num_pages }}"
+                class="pagina"
+            >Última</a>
+        {% else %}
+            <span class="pagina deshabilitada">Siguiente</span>
+            <span class="pagina deshabilitada">Última</span>
+        {% endif %}
+
+    </div>
+
+    <p class="resumen-paginacion">
+        Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}.
+        Total de modelos: {{ pagina.paginator.count }}.
+    </p>
+
+</main>
+{% endblock %}

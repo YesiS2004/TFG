@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block migas %}
+    <span>Modelos</span>
+{% endblock %}
+{% block contenido %}
+<main class="contenido">
+
+    <div class="encabezado">
+        <h1>{{ titulo }}</h1>
+
+        <a href="{% url 'lista_modelos' %}" class="boton menu">
+            Volver a modelos
+        </a>
+    </div>
+
+    <div class="formulario-contenedor">
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if not hay_marcas %}
+                <p class="aviso-formulario">
+                    Primero debes registrar al menos una marca.
+                    <a href="{% url 'registrar_marca' %}">
+                        Registrar marca
+                    </a>
+                </p>
+            {% endif %}
+
+            {% for campo in form %}
+                <div class="campo-formulario">
+                    <label for="{{ campo.id_for_label }}">
+                        {{ campo.label }} <span>*</span>
+                    </label>
+
+                    {{ campo }}
+
+                    {% for error in campo.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <p class="error-campo">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <p class="texto-obligatorio">
+                * Campos obligatorios.
+            </p>
+
+            <div class="acciones-formulario">
+                <button
+                    type="submit"
+                    class="boton nuevo"
+                    {% if not hay_marcas %}disabled{% endif %}
+                >
+                    {{ texto_boton }}
+                </button>
+
+                <a href="{% url 'lista_modelos' %}" class="boton menu">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

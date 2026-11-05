@@ -1,0 +1,50 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block migas %}
+    <span>Repuestos</span>
+{% endblock %}
+{% block contenido %}
+
+<main class="contenido">
+
+    <div class="encabezado">
+        <h1>{{ titulo }}</h1>
+    </div>
+
+    <div class="formulario-contenedor">
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for campo in form %}
+                <div class="campo-formulario">
+                    <label for="{{ campo.id_for_label }}">
+                        {{ campo.label }}
+                    </label>
+
+                    {{ campo }}
+
+                    {% if campo.errors %}
+                        <div class="error-campo">
+                            {{ campo.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="acciones-formulario">
+                <button type="submit" class="boton nuevo">
+                    {{ texto_boton }}
+                </button>
+
+                <a href="{% url 'lista_repuestos' %}" class="boton menu">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+</main>
+
+{% endblock %}

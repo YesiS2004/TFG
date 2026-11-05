@@ -1,8 +1,14 @@
-from django.contrib.auth import authenticate, login
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 
 
 def iniciar_sesion(request):
+    # Si ya inició sesión, ir directamente al inicio.
+    if request.user.is_authenticated:
+        return redirect('home')
 
     if request.method == 'POST':
         usuario = request.POST.get('usuario')
@@ -23,3 +29,10 @@ def iniciar_sesion(request):
         })
 
     return render(request, 'usuarios/login.html')
+
+
+@login_required
+@require_POST
+def cerrar_sesion(request):
+    logout(request)
+    return redirect('login')

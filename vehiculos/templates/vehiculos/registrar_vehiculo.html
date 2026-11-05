@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    {% if vehiculo %}Editar vehículo{% else %}Registrar vehículo{% endif %}
+{% endblock %}
+
+{% block migas %}
+    <a href="{% url 'lista_vehiculos' %}">Vehículos</a>
+    <span>/</span>
+    {% if vehiculo %}
+        <span>Editar vehículo</span>
+    {% else %}
+        <span>Registrar vehículo</span>
+    {% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<main class="contenido">
+
+    <div class="encabezado">
+        <h1>
+            {% if vehiculo %}
+                Editar vehículo
+            {% else %}
+                Registrar vehículo
+            {% endif %}
+        </h1>
+    </div>
+
+    <form method="POST" class="formulario">
+        {% csrf_token %}
+
+        {{ formulario.non_field_errors }}
+
+        <div class="campo-formulario">
+            <label for="{{ formulario.cliente.id_for_label }}">Cliente</label>
+            {{ formulario.cliente }}
+            {{ formulario.cliente.errors }}
+        </div>
+
+        <div class="campo-formulario">
+            <label for="{{ formulario.modelo.id_for_label }}">Modelo</label>
+            {{ formulario.modelo }}
+            {{ formulario.modelo.errors }}
+        </div>
+
+        <div class="campo-formulario">
+            <label for="{{ formulario.anio.id_for_label }}">Año</label>
+            {{ formulario.anio }}
+            {{ formulario.anio.errors }}
+        </div>
+
+        <div class="campo-formulario">
+            <label for="{{ formulario.matricula.id_for_label }}">Matrícula</label>
+            {{ formulario.matricula }}
+            {{ formulario.matricula.errors }}
+        </div>
+
+        <div class="campo-formulario">
+            <label for="{{ formulario.chasis.id_for_label }}">Número de chasis</label>
+            {{ formulario.chasis }}
+            {{ formulario.chasis.errors }}
+        </div>
+
+        <div class="campo-formulario">
+            <label for="{{ formulario.color.id_for_label }}">Color</label>
+            {{ formulario.color }}
+            {{ formulario.color.errors }}
+        </div>
+
+        <div class="acciones-formulario">
+            {% if vehiculo %}
+                <button type="submit" class="boton nuevo">Guardar cambios</button>
+            {% else %}
+                <button type="submit" class="boton nuevo">Registrar vehículo</button>
+            {% endif %}
+
+            <a href="{% url 'lista_vehiculos' %}" class="boton menu">Cancelar</a>
+        </div>
+    </form>
+
+</main>
+
+{% endblock %}

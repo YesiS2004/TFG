@@ -315,6 +315,15 @@ a.pagina:hover {
 }
 
 @media (max-width: 700px) {
+    .barra-navegacion {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .boton-tema {
+        margin-left: 0;
+    }
+
     .contenido {
         width: calc(100% - 24px);
         margin: 20px auto;
@@ -502,7 +511,6 @@ a.pagina:hover {
     }
 }
 
-/* FORMULARIO DE SERVICIOS */
 
 .servicio-formulario {
     width: 100%;
@@ -625,4 +633,667 @@ a.pagina:hover {
     .servicio-acciones .boton {
         width: 100%;
     }
+}
+
+.aviso-formulario {
+    padding: 14px 16px;
+    margin: 0;
+    border: 1px solid #cbdcf0;
+    border-radius: 6px;
+    background-color: #edf3f9;
+    color: #243447;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.aviso-formulario a {
+    color: #2463a6;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.acciones-formulario button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+
+.boton-cerrar-sesion {
+    display: block;
+    width: 100%;
+    margin-top: auto;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 6px;
+    background-color: #17365d;
+    color: white;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.boton-cerrar-sesion:hover {
+    background-color: #244b78;
+}
+
+
+.modal-cerrar-sesion {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-cerrar-sesion.activo {
+    display: flex;
+}
+
+
+.contenido-modal-cerrar-sesion {
+    width: 100%;
+    max-width: 420px;
+    padding: 25px;
+    border-radius: 10px;
+    background-color: white;
+    color: #17365d;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contenido-modal-cerrar-sesion h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.contenido-modal-cerrar-sesion p {
+    margin-bottom: 25px;
+    color: #444;
+}
+
+.acciones-modal-cerrar-sesion {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.acciones-modal-cerrar-sesion form {
+    margin: 0;
+}
+
+.boton-confirmar-salida,
+.boton-cancelar-salida {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.boton-confirmar-salida {
+    background-color: #17365d;
+    color: white;
+}
+
+.boton-confirmar-salida:hover {
+    background-color: #244b78;
+}
+
+.boton-cancelar-salida {
+    background-color: #e5eaf0;
+    color: #17365d;
+}
+
+.boton-cancelar-salida:hover {
+    background-color: #d2dbe6;
+}
+
+/* ==============================
+   ESTRUCTURA GENERAL DEL SISTEMA
+============================== */
+
+.area-principal {
+    min-height: 100vh;
+    margin-left: 220px;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenido-principal {
+    flex: 1;
+    padding: 25px;
+}
+
+
+/* ==============================
+   SIDEBAR / MENÚ LATERAL
+============================== */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100vh;
+    padding: 20px;
+    background-color: #17365d;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    color: #ffffff;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 10px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #ffffff;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar a:hover {
+    background-color: #244b78;
+}
+
+
+/* ==============================
+   BARRA DE NAVEGACIÓN SUPERIOR
+============================== */
+
+.barra-navegacion {
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.migas-pan {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #667085;
+    font-size: 14px;
+}
+
+.migas-pan a {
+    color: #2463a6;
+    font-weight: 600;
+}
+
+.migas-pan a:hover {
+    text-decoration: underline;
+}
+
+.migas-pan span:last-child {
+    color: #243447;
+}
+
+
+/* ==============================
+   BOTÓN DE CERRAR SESIÓN
+============================== */
+
+.boton-cerrar-sesion {
+    display: block;
+    width: 100%;
+    margin-top: auto;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 6px;
+    background-color: #17365d;
+    color: white;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.boton-cerrar-sesion:hover {
+    background-color: #244b78;
+}
+
+
+/* ==============================
+   MODAL DE CIERRE DE SESIÓN
+============================== */
+
+.modal-cerrar-sesion {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-cerrar-sesion.activo {
+    display: flex;
+}
+
+.contenido-modal-cerrar-sesion {
+    width: 100%;
+    max-width: 420px;
+    padding: 25px;
+    border-radius: 10px;
+    background-color: white;
+    color: #17365d;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contenido-modal-cerrar-sesion h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.contenido-modal-cerrar-sesion p {
+    margin-bottom: 25px;
+    color: #444;
+}
+
+.acciones-modal-cerrar-sesion {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.acciones-modal-cerrar-sesion form {
+    margin: 0;
+}
+
+.boton-confirmar-salida,
+.boton-cancelar-salida {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.boton-confirmar-salida {
+    background-color: #17365d;
+    color: white;
+}
+
+.boton-confirmar-salida:hover {
+    background-color: #244b78;
+}
+
+.boton-cancelar-salida {
+    background-color: #e5eaf0;
+    color: #17365d;
+}
+
+.boton-cancelar-salida:hover {
+    background-color: #d2dbe6;
+}
+
+
+/* ==============================
+   DISEÑO RESPONSIVE
+============================== */
+
+@media (max-width: 700px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+    }
+
+    .sidebar h2 {
+        margin-bottom: 15px;
+    }
+
+    .sidebar a {
+        padding: 10px;
+    }
+
+    .boton-cerrar-sesion {
+        margin-top: 15px;
+    }
+
+    .area-principal {
+        margin-left: 0;
+    }
+
+    .contenido-principal {
+        padding: 15px;
+    }
+
+    .barra-navegacion {
+        padding: 15px;
+    }
+}
+
+
+/* ==============================
+   BOTÓN DE CAMBIO DE TEMA
+============================== */
+
+.boton-tema {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-left: auto;
+    padding: 9px 16px;
+    border: 1px solid #d5dce5;
+    border-radius: 8px;
+    background-color: #f5f7fa;
+    color: #243447;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.boton-tema:hover {
+    background-color: #e5eaf0;
+    border-color: #b8c4d3;
+}
+
+/* Botón en modo oscuro */
+html.modo-oscuro .boton-tema {
+    background-color: #29384c;
+    border-color: #45566e;
+    color: #e5eaf0;
+}
+
+html.modo-oscuro .boton-tema:hover {
+    background-color: #34445a;
+}
+
+/* ==============================
+   MODO OSCURO - GENERAL
+============================== */
+
+html.modo-oscuro body {
+    background-color: #151b26;
+    color: #e5eaf0;
+}
+
+html.modo-oscuro .area-principal {
+    background-color: #151b26;
+}
+
+html.modo-oscuro .contenido-principal {
+    background-color: #151b26;
+}
+
+html.modo-oscuro h1,
+html.modo-oscuro h2,
+html.modo-oscuro h3,
+html.modo-oscuro .encabezado h1 {
+    color: #e5eaf0;
+}
+
+
+/* ==============================
+   MODO OSCURO - SIDEBAR
+============================== */
+
+html.modo-oscuro .sidebar {
+    background-color: #1e2938;
+}
+
+html.modo-oscuro .sidebar h2 {
+    color: #ffffff;
+}
+
+html.modo-oscuro .sidebar a {
+    color: #dce4ef;
+}
+
+html.modo-oscuro .sidebar a:hover {
+    background-color: #34445a;
+}
+
+html.modo-oscuro .boton-tema {
+    background-color: #34445a;
+    border-color: #45566e;
+    color: #ffffff;
+}
+
+html.modo-oscuro .boton-tema:hover {
+    background-color: #45566e;
+}
+
+
+/* ==============================
+   MODO OSCURO - BARRA SUPERIOR
+============================== */
+
+html.modo-oscuro .barra-navegacion {
+    background-color: #1e2938;
+    border-bottom-color: #34445a;
+}
+
+html.modo-oscuro .migas-pan {
+    color: #aebdce;
+}
+
+html.modo-oscuro .migas-pan a {
+    color: #80b5f0;
+}
+
+html.modo-oscuro .migas-pan span:last-child {
+    color: #e5eaf0;
+}
+
+
+/* ==============================
+   MODO OSCURO - CONTENEDORES
+============================== */
+
+html.modo-oscuro .tabla-contenedor,
+html.modo-oscuro .formulario-contenedor,
+html.modo-oscuro .servicio-formulario,
+html.modo-oscuro .busqueda-campo,
+html.modo-oscuro .vacio {
+    background-color: #1e2938;
+    border-color: #34445a;
+    box-shadow: none;
+}
+
+html.modo-oscuro .vacio p,
+html.modo-oscuro .resumen-paginacion {
+    color: #aebdce;
+}
+
+
+/* ==============================
+   MODO OSCURO - TABLAS
+============================== */
+
+html.modo-oscuro .tabla-contenedor th {
+    background-color: #29384c;
+    color: #e5eaf0;
+    border-bottom-color: #34445a;
+}
+
+html.modo-oscuro .tabla-contenedor td {
+    color: #dce4ef;
+    border-bottom-color: #34445a;
+}
+
+html.modo-oscuro .tabla-contenedor tbody tr {
+    background-color: #1e2938;
+}
+
+html.modo-oscuro .tabla-contenedor tbody tr:hover {
+    background-color: #29384c;
+}
+
+
+/* ==============================
+   MODO OSCURO - FORMULARIOS
+============================== */
+
+html.modo-oscuro .campo-formulario label,
+html.modo-oscuro .servicio-campo label {
+    color: #e5eaf0;
+}
+
+html.modo-oscuro .campo-formulario input,
+html.modo-oscuro .campo-formulario textarea,
+html.modo-oscuro .campo-formulario select,
+html.modo-oscuro .servicio-campo input,
+html.modo-oscuro .servicio-campo textarea,
+html.modo-oscuro .servicio-campo select,
+html.modo-oscuro .busqueda-campo input {
+    background-color: #29384c;
+    border-color: #45566e;
+    color: #ffffff;
+}
+
+html.modo-oscuro .campo-formulario input::placeholder,
+html.modo-oscuro .servicio-campo input::placeholder,
+html.modo-oscuro .busqueda-campo input::placeholder {
+    color: #aebdce;
+}
+
+html.modo-oscuro .campo-formulario input:focus,
+html.modo-oscuro .campo-formulario textarea:focus,
+html.modo-oscuro .campo-formulario select:focus,
+html.modo-oscuro .servicio-campo input:focus,
+html.modo-oscuro .servicio-campo textarea:focus,
+html.modo-oscuro .busqueda-campo input:focus {
+    border-color: #80b5f0;
+}
+
+html.modo-oscuro .campo-formulario small,
+html.modo-oscuro .servicio-campo small,
+html.modo-oscuro .texto-obligatorio,
+html.modo-oscuro .servicio-obligatorio {
+    color: #aebdce;
+}
+
+html.modo-oscuro .acciones-formulario,
+html.modo-oscuro .servicio-acciones {
+    border-top-color: #34445a;
+}
+
+
+/* ==============================
+   MODO OSCURO - BOTONES
+============================== */
+
+html.modo-oscuro .boton.menu {
+    background-color: #34445a;
+    color: #e5eaf0;
+}
+
+html.modo-oscuro .boton.menu:hover {
+    background-color: #45566e;
+}
+
+html.modo-oscuro .boton.editar {
+    background-color: #293f5c;
+    color: #a9ceff;
+}
+
+html.modo-oscuro .boton.editar:hover {
+    background-color: #344f72;
+}
+
+html.modo-oscuro .boton.cancelar {
+    background-color: #34445a;
+    color: #e5eaf0;
+}
+
+
+/* ==============================
+   MODO OSCURO - PAGINACIÓN
+============================== */
+
+html.modo-oscuro .pagina {
+    background-color: #29384c;
+    border-color: #45566e;
+    color: #e5eaf0;
+}
+
+html.modo-oscuro a.pagina:hover {
+    background-color: #34445a;
+}
+
+html.modo-oscuro .pagina.activa {
+    background-color: #2463a6;
+    border-color: #2463a6;
+    color: #ffffff;
+}
+
+html.modo-oscuro .pagina.deshabilitada {
+    background-color: #1e2938;
+    color: #718096;
+}
+
+
+/* ==============================
+   MODO OSCURO - AVISOS
+============================== */
+
+html.modo-oscuro .aviso-formulario {
+    background-color: #29384c;
+    border-color: #45566e;
+    color: #e5eaf0;
+}
+
+html.modo-oscuro .aviso-formulario a {
+    color: #80b5f0;
+}
+
+
+/* ==============================
+   MODO OSCURO - MENSAJES
+============================== */
+
+html.modo-oscuro .mensaje-exito {
+    background-color: #193b30;
+    border-color: #28634d;
+    color: #a8e6c5;
+}
+
+
+/* ==============================
+   MODO OSCURO - MODALES
+============================== */
+
+html.modo-oscuro .modal-contenido,
+html.modo-oscuro .contenido-modal-cerrar-sesion {
+    background-color: #1e2938;
+    color: #e5eaf0;
+}
+
+html.modo-oscuro .modal-contenido h2,
+html.modo-oscuro .contenido-modal-cerrar-sesion h2 {
+    color: #ffffff;
+}
+
+html.modo-oscuro .modal-contenido p,
+html.modo-oscuro .contenido-modal-cerrar-sesion p {
+    color: #aebdce;
+}
+
+html.modo-oscuro .boton-cancelar-salida {
+    background-color: #34445a;
+    color: #e5eaf0;
+}
+
+html.modo-oscuro .boton-cancelar-salida:hover {
+    background-color: #45566e;
 }

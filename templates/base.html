@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
@@ -5,12 +6,190 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Sistema de gestión{% endblock %}</title>
+    <script>
+        if (localStorage.getItem('tema') === 'oscuro') {
+            document.documentElement.classList.add('modo-oscuro');
+        }
+    </script>
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+
+    <!-- Cargar el tema guardado antes de mostrar la página -->
+    <script>
+        if (localStorage.getItem('tema') === 'oscuro') {
+            document.documentElement.classList.add('modo-oscuro');
+        }
+    </script>
 </head>
 <body>
 
-    {% block contenido %}
-    {% endblock %}
+    <!-- Menú lateral -->
+    <nav class="sidebar">
+        <h2>Taller Mecánico</h2>
+
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'lista_clientes' %}">Clientes</a>
+        <a href="{% url 'lista_proveedores' %}">Proveedores</a>
+        <a href="{% url 'lista_vehiculos' %}">Vehículos</a>
+        <a href="#">Turnos</a>
+        <a href="{% url 'lista_repuestos' %}">Repuestos</a>
+        <a href="{% url 'lista_servicios' %}">Servicios</a>
+        <a href="{% url 'lista_marcas' %}">Marcas</a>
+        <a href="{% url 'lista_modelos' %}">Modelos</a>
+
+        <button
+            type="button"
+            class="boton-cerrar-sesion"
+            onclick="abrirModalCerrarSesion()">
+            ⏻ Cerrar sesión
+        </button>
+    </nav>
+
+    <!-- Área principal -->
+    <div class="area-principal">
+
+        <!-- Barra de navegación / ubicación -->
+        <header class="barra-navegacion">
+
+            <nav class="migas-pan" aria-label="Ruta de navegación">
+                <a href="{% url 'home' %}">Sistema de gestión</a>
+                <span>/</span>
+                {% block migas %}
+                    <span>Home</span>
+                {% endblock %}
+            </nav>
+
+            <!-- Botón para cambiar el tema -->
+            <button
+                type="button"
+                class="boton-tema"
+                id="botonTema"
+                onclick="cambiarTema()"
+                aria-pressed="false">
+                ☾ Modo oscuro
+            </button>
+
+        </header>
+
+        <main class="contenido-principal">
+
+            <!-- Mensajes del sistema -->
+            {% if messages %}
+                <div class="mensajes">
+                    {% for message in messages %}
+                        <div class="mensaje-exito">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block contenido %}
+            {% endblock %}
+
+        </main>
+    </div>
+
+    <!-- Ventana de confirmación de cierre de sesión -->
+    <div
+        id="modalCerrarSesion"
+        class="modal-cerrar-sesion"
+        aria-hidden="true">
+
+        <div
+            class="contenido-modal-cerrar-sesion"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloCerrarSesion">
+
+            <h2 id="tituloCerrarSesion">Cerrar sesión</h2>
+
+            <p>¿Estás seguro de que quieres cerrar tu sesión?</p>
+
+            <div class="acciones-modal-cerrar-sesion">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton-confirmar-salida">
+                        Salir
+                    </button>
+                </form>
+
+                <button
+                    type="button"
+                    class="boton-cancelar-salida"
+                    onclick="cerrarModalCerrarSesion()">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts generales -->
+    <script>
+        // Abrir modal de cierre de sesión
+        function abrirModalCerrarSesion() {
+            const modal = document.getElementById('modalCerrarSesion');
+            modal.classList.add('activo');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        // Cerrar modal de cierre de sesión
+        function cerrarModalCerrarSesion() {
+            const modal = document.getElementById('modalCerrarSesion');
+            modal.classList.remove('activo');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        // Cerrar al pulsar fuera del cuadro
+        document.getElementById('modalCerrarSesion').addEventListener('click', function(event) {
+            if (event.target === this) {
+                cerrarModalCerrarSesion();
+            }
+        });
+
+        // Cerrar al pulsar Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarModalCerrarSesion();
+            }
+        });
+
+        // Cambiar entre modo claro y oscuro
+        function cambiarTema() {
+            const html = document.documentElement;
+            const boton = document.getElementById('botonTema');
+
+            html.classList.toggle('modo-oscuro');
+
+            const modoOscuro = html.classList.contains('modo-oscuro');
+
+            localStorage.setItem('tema', modoOscuro ? 'oscuro' : 'claro');
+
+            boton.textContent = modoOscuro ? '☀ Modo claro' : '☾ Modo oscuro';
+            boton.setAttribute('aria-pressed', modoOscuro);
+        }
+
+        // Cargar el tema guardado
+        function cargarTema() {
+            const modoOscuro = localStorage.getItem('tema') === 'oscuro';
+            const boton = document.getElementById('botonTema');
+
+            document.documentElement.classList.toggle('modo-oscuro', modoOscuro);
+
+            boton.textContent = modoOscuro ? '☀ Modo claro' : '☾ Modo oscuro';
+            boton.setAttribute('aria-pressed', modoOscuro);
+        }
+
+        cargarTema();
+
+        // Ocultar mensajes automáticamente
+        document.querySelectorAll('.mensaje-exito').forEach(function(mensaje) {
+            setTimeout(function() {
+                mensaje.classList.add('ocultar');
+
+                setTimeout(function() {
+                    mensaje.remove();
+                }, 500);
+            }, 4000);
+        });
+    </script>
 
 </body>
 </html>

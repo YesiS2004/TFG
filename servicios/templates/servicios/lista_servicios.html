@@ -1,19 +1,12 @@
-
 {% extends 'base.html' %}
 
 {% block titulo %}Servicios{% endblock %}
-
+{% block migas %}
+    <span>Servicios</span>
+{% endblock %}
 {% block contenido %}
 
 <main class="contenido">
-
-    {% if messages %}
-        <div class="mensajes">
-            {% for message in messages %}
-                <div class="mensaje-exito">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
 
     <div class="encabezado">
         <h1>Servicios</h1>
@@ -163,7 +156,9 @@
 
         <h2>¿Eliminar servicio?</h2>
 
-        <p>Esta acción eliminará el registro del servicio. ¿Deseas continuar?</p>
+        <p>
+            Esta acción eliminará el registro del servicio. ¿Deseas continuar?
+        </p>
 
         <form method="POST" id="form-confirmar-eliminacion">
             {% csrf_token %}
@@ -208,15 +203,6 @@
         if (evento.key === 'Escape') {
             cerrarConfirmacion();
         }
-    });
-
-    document.querySelectorAll('.mensaje-exito').forEach(function(mensaje) {
-        setTimeout(function() {
-            mensaje.classList.add('ocultar');
-            setTimeout(function() {
-                mensaje.remove();
-            }, 500);
-        }, 4000);
     });
 </script>
 

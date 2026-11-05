@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'clientes',
     'proveedores',
     'servicios',
+    'caracteristicas_vehiculos',
+    'repuestos',
+    'vehiculos',
 ]
 
 MIDDLEWARE = [
@@ -140,3 +143,12 @@ MAILERS = {
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
+
+# Cerrar sesión después de 4 horas de inactividad
+SESSION_COOKIE_AGE = 14400
+
+# La sesión expira al cerrar el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Renovar el tiempo de expiración con cada solicitud
+SESSION_SAVE_EVERY_REQUEST = True

@@ -1,0 +1,50 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block migas %}
+    <span>Marcas</span>
+{% endblock %}
+{% block contenido %}
+<main class="contenido">
+
+    <div class="encabezado">
+        <h1>{{ titulo }}</h1>
+        <a href="{% url 'lista_marcas' %}" class="boton menu">
+            Volver a marcas
+        </a>
+    </div>
+
+    <div class="formulario-contenedor">
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for campo in form %}
+                <div class="campo-formulario">
+                    <label for="{{ campo.id_for_label }}">
+                        {{ campo.label }} <span>*</span>
+                    </label>
+
+                    {{ campo }}
+
+                    {% for error in campo.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <p class="texto-obligatorio">* Campos obligatorios.</p>
+
+            <div class="acciones-formulario">
+                <button type="submit" class="boton nuevo">
+                    {{ texto_boton }}
+                </button>
+                <a href="{% url 'lista_marcas' %}" class="boton menu">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

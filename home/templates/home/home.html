@@ -1,71 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+{% extends 'base.html' %}
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+{% block titulo %}Inicio{% endblock %}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+{% block migas %}
+    <span>Home</span>
+{% endblock %}
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 220px;
-            height: 100vh;
-            padding: 20px;
-            background-color: #f2f2f2;
-        }
-
-        .sidebar h2 {
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 12px 10px;
-            margin-bottom: 5px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        .sidebar a:hover {
-            background-color: #ddd;
-        }
-
-        .content {
-            margin-left: 220px;
-            padding: 30px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <nav class="sidebar">
-        <h2>Taller Mecánico</h2>
-
-        <a href="#">Home</a>
-        <a href="{% url 'lista_clientes' %}">Clientes</a>
-        <a href="{% url 'lista_proveedores' %}">Proveedores</a>
-        <a href="#">Vehículos</a>
-        <a href="#">Turnos</a>
-        <a href="#">Repuestos</a>
-        <a href="{% url 'lista_servicios' %}">Servicios</a>
-    </nav>
-
-    <main class="content">
+{% block contenido %}
+    <div class="contenido">
         <h1>Hola mundo</h1>
-    </main>
-
-</body>
-</html>
+    </div>
+{% endblock %}
