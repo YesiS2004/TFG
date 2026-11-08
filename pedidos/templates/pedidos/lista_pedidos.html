@@ -1,0 +1,225 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}Gestión de pedidos{% endblock %}
+
+{% block migas %}
+    Gestión de pedidos
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenido">
+
+    <div class="encabezado">
+        <h1>Gestión de pedidos</h1>
+
+        <a href="{% url 'registrar_pedido' %}" class="boton">
+            + Nuevo pedido
+        </a>
+    </div>
+
+    <!-- Búsqueda y filtros -->
+
+    <form method="GET" class="filtros-reparaciones">
+
+        <div class="busqueda-reparaciones">
+            <input
+                type="text"
+                name="q"
+                placeholder="Buscar por proveedor o repuesto..."
+                value="{{ busqueda }}"
+            >
+
+            <button type="submit" class="boton-buscar-reparacion">
+                Buscar
+            </button>
+        </div>
+
+        <select name="estado" class="select-estado-reparacion">
+
+            <option value="">Todos los estados</option>
+
+            {% for valor, etiqueta in estados %}
+                <option value="{{ valor }}"
+                    {% if estado_seleccionado == valor %}selected{% endif %}>
+                    {{ etiqueta }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <button type="submit" class="boton-filtrar-reparacion">
+            Filtrar
+        </button>
+
+        {% if busqueda or estado_seleccionado %}
+            <a href="{% url 'lista_pedidos' %}"
+               class="boton-limpiar-reparacion">
+                Limpiar
+            </a>
+        {% endif %}
+
+    </form>
+
+
+    <!-- Tabla de pedidos -->
+
+    <div class="tabla-contenedor">
+
+        <table class="tabla">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Proveedor</th>
+                    <th>Fecha del pedido</th>
+                    <th>Repuestos solicitados</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for pedido in pagina %}
+
+                    <tr>
+
+                        <td>{{ pedido.id_pedido }}</td>
+
+                        <td>{{ pedido.proveedor }}</td>
+
+                        <td>{{ pedido.fecha_pedido|date:"d/m/Y" }}</td>
+
+                        <td>
+                            {% for detalle in pedido.detalles.all %}
+
+                                <div>
+                                    {{ detalle.repuesto.nombre_pieza }}
+                                    ({{ detalle.cantidad }} unidades)
+                                </div>
+
+                            {% empty %}
+                                -
+                            {% endfor %}
+                        </td>
+
+                        <td>{{ pedido.estado }}</td>
+
+                        <td>
+
+                            <a href="{% url 'editar_pedido' pedido.id_pedido %}"
+                               class="boton">
+                                Editar
+                            </a>
+
+                            <button type="button"
+                                    class="boton"
+                                    onclick="abrirModal({{ pedido.id_pedido }})">
+                                Eliminar
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6" class="vacio">
+                            No hay pedidos registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- Paginación -->
+
+    {% if pagina.has_other_pages %}
+
+        <div class="paginacion">
+
+            {% if pagina.has_previous %}
+                <a href="?page={{ pagina.previous_page_number }}&q={{ busqueda|urlencode }}&estado={{ estado_seleccionado|urlencode }}">
+                    Anterior
+                </a>
+            {% endif %}
+
+            <span>
+                Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}
+            </span>
+
+            {% if pagina.has_next %}
+                <a href="?page={{ pagina.next_page_number }}&q={{ busqueda|urlencode }}&estado={{ estado_seleccionado|urlencode }}">
+                    Siguiente
+                </a>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- Modal de eliminación -->
+
+<div id="modalEliminar" class="modal">
+
+    <div class="modal-contenido">
+
+        <h3>Eliminar pedido</h3>
+
+        <p>¿Estás segura de que deseas eliminar este pedido?</p>
+
+        <form id="formularioEliminar" method="POST">
+
+            {% csrf_token %}
+
+            <div class="acciones-formulario">
+
+                <button type="button" class="boton"
+                        onclick="cerrarModal()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="boton">
+                    Eliminar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function abrirModal(id) {
+
+        const modal = document.getElementById('modalEliminar');
+        const formulario = document.getElementById('formularioEliminar');
+
+        formulario.action = `/pedidos/eliminar/${id}/`;
+
+        modal.style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEliminar').style.display = 'none';
+    }
+
+</script>
+
+{% endblock %}

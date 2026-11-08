@@ -11,4 +11,7 @@ urlpatterns = [
     path('caracteristicas-vehiculos/', include('caracteristicas_vehiculos.urls')),
     path('repuestos/', include('repuestos.urls')),
     path('vehiculos/', include('vehiculos.urls')),
+    path('reparaciones/', include('reparaciones.urls')),
+    path('turnos/', include('turnos.urls')),
+    path('pedidos/', include('pedidos.urls')),
 ]

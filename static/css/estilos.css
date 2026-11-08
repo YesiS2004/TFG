@@ -1297,3 +1297,566 @@ html.modo-oscuro .boton-cancelar-salida {
 html.modo-oscuro .boton-cancelar-salida:hover {
     background-color: #45566e;
 }
+
+
+/* ================================
+   FORMULARIO DE REPARACIONES
+================================ */
+
+.formulario-contenedor {
+    width: 100%;
+    max-width: 850px;
+    margin: 20px auto;
+    padding: 25px;
+    background: var(--color-contenedor, #ffffff);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.formulario-contenedor form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formulario-contenedor .grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formulario-contenedor .grupo-formulario label {
+    font-weight: 600;
+    color: var(--color-texto, #17365d);
+}
+
+.formulario-contenedor .campo-formulario,
+.formulario-contenedor input,
+.formulario-contenedor select,
+.formulario-contenedor textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--color-input, #ffffff);
+    color: var(--color-texto, #333333);
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formulario-contenedor .campo-formulario:focus,
+.formulario-contenedor input:focus,
+.formulario-contenedor select:focus,
+.formulario-contenedor textarea:focus {
+    border-color: #4778ad;
+    box-shadow: 0 0 0 3px rgba(71, 120, 173, 0.15);
+}
+
+.formulario-contenedor textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Selección múltiple de servicios y repuestos */
+
+.formulario-contenedor select[multiple] {
+    min-height: 145px;
+    padding: 8px;
+}
+
+.formulario-contenedor select[multiple] option {
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.formulario-contenedor select[multiple] option:checked {
+    background: #dce9f7 linear-gradient(0deg, #dce9f7 0%, #dce9f7 100%);
+    color: #17365d;
+}
+
+/* Texto de ayuda */
+
+.formulario-contenedor .ayuda-formulario {
+    margin: 0;
+    font-size: 13px;
+    color: #777777;
+}
+
+/* Mensajes de error */
+
+.formulario-contenedor .error-campo {
+    color: #c0392b;
+    font-size: 13px;
+}
+
+.formulario-contenedor .error-formulario {
+    padding: 12px;
+    color: #a93226;
+    background: #fce8e6;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* Botones inferiores */
+
+.formulario-contenedor .acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    padding-top: 18px;
+    border-top: 1px solid #e5e5e5;
+}
+
+/* Adaptación para pantallas pequeñas */
+
+@media (max-width: 600px) {
+    .formulario-contenedor {
+        padding: 16px;
+        margin: 12px auto;
+    }
+
+    .formulario-contenedor .acciones-formulario {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .formulario-contenedor .acciones-formulario .boton {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+
+/* =====================================
+   CARRITO DE REPARACIONES
+===================================== */
+
+.formulario-reparacion {
+    max-width: 1100px;
+}
+
+.titulo-seccion-carrito {
+    color: #17365d;
+    font-size: 18px;
+    margin: 10px 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e5eaf0;
+}
+
+.seccion-carrito {
+    margin-top: 30px;
+}
+
+.agregar-producto {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.agregar-producto select {
+    flex: 1;
+    min-width: 0;
+}
+
+.agregar-repuesto input {
+    max-width: 110px;
+}
+
+.boton-agregar {
+    background-color: #17365d;
+    color: white;
+    border: none;
+    white-space: nowrap;
+}
+
+.boton-agregar:hover {
+    background-color: #244b78;
+}
+
+.tabla-carrito {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-carrito th {
+    background-color: #edf2f8;
+    color: #17365d;
+    font-weight: 600;
+}
+
+.tabla-carrito td,
+.tabla-carrito th {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.tabla-carrito .vacio {
+    text-align: center;
+    padding: 22px;
+    color: #777;
+}
+
+.cantidad-carrito {
+    width: 75px;
+    padding: 7px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.boton-quitar {
+    padding: 7px 12px;
+    background-color: #fce8e6;
+    color: #b42318;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.boton-quitar:hover {
+    background-color: #f5c6c2;
+}
+
+/* Resumen de costos */
+
+.resumen-carrito {
+    max-width: 430px;
+    margin: 30px 0 20px auto;
+    padding: 20px;
+    background-color: #f5f8fc;
+    border: 1px solid #dce4ee;
+    border-radius: 8px;
+}
+
+.resumen-carrito h3 {
+    margin: 0 0 18px;
+    color: #17365d;
+    font-size: 17px;
+}
+
+.resumen-linea,
+.resumen-total {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 10px 0;
+    color: #444;
+}
+
+.resumen-total {
+    margin-top: 10px;
+    padding-top: 16px;
+    border-top: 2px solid #cbd6e2;
+    color: #17365d;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+/* Adaptación para pantallas pequeñas */
+
+@media (max-width: 700px) {
+    .agregar-producto {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .agregar-repuesto input {
+        max-width: none;
+    }
+
+    .tabla-contenedor {
+        overflow-x: auto;
+    }
+
+    .tabla-carrito {
+        min-width: 600px;
+    }
+
+    .resumen-carrito {
+        max-width: none;
+    }
+}
+
+/* =====================================
+   BÚSQUEDA Y FILTROS DE REPARACIONES
+===================================== */
+
+.filtros-reparaciones {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.busqueda-reparaciones {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 240px;
+    max-width: 450px;
+    height: 42px;
+    border: 1px solid #ced4da;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.busqueda-reparaciones input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0 13px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #333333;
+    font-size: 14px;
+}
+
+.boton-buscar-reparacion {
+    width: 44px;
+    height: 100%;
+    border: none;
+    background: #17365d;
+    color: white;
+    cursor: pointer;
+}
+
+.boton-buscar-reparacion:hover {
+    background: #244b78;
+}
+
+.select-estado-reparacion {
+    width: 190px;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #ced4da;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #333333;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+}
+
+.select-estado-reparacion:focus,
+.busqueda-reparaciones:focus-within {
+    border-color: #4778ad;
+    box-shadow: 0 0 0 3px rgba(71, 120, 173, 0.12);
+}
+
+.boton-filtrar-reparacion,
+.boton-limpiar-reparacion {
+    height: 42px;
+    padding: 0 17px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 7px;
+    background: #17365d;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.boton-filtrar-reparacion:hover {
+    background: #244b78;
+}
+
+.boton-limpiar-reparacion {
+    background: #e9edf2;
+    color: #17365d;
+}
+
+.boton-limpiar-reparacion:hover {
+    background: #dce3eb;
+}
+
+@media (max-width: 600px) {
+    .filtros-reparaciones {
+        align-items: stretch;
+    }
+
+    .busqueda-reparaciones {
+        max-width: none;
+        flex-basis: 100%;
+    }
+
+    .select-estado-reparacion {
+        flex: 1;
+        width: auto;
+    }
+}
+
+```css
+/* ============================= */
+/*          LOGIN                */
+/* ============================= */
+
+.pagina-login {
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background-color: #17365d !important;
+    font-family: Arial, sans-serif;
+}
+
+.contenedor-login {
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.20);
+    box-sizing: border-box;
+}
+
+.encabezado-login {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.icono-login {
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #e4edf8;
+    color: #17365d;
+    font-size: 27px;
+}
+
+.encabezado-login h1 {
+    margin: 0 0 10px;
+    color: #17365d;
+    font-size: 27px;
+}
+
+.encabezado-login p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+}
+
+.formulario-login {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.campo-login {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo-login label {
+    color: #17365d;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.campo-login input {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border: 1px solid #ced6e0;
+    border-radius: 7px;
+    outline: none;
+    font-size: 14px;
+    background: #ffffff;
+    color: #333333;
+}
+
+.campo-login input:focus {
+    border-color: #4778ad;
+    box-shadow: 0 0 0 3px rgba(71, 120, 173, 0.12);
+}
+
+.boton-login {
+    height: 45px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 7px;
+    background: #17365d;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.boton-login:hover {
+    background: #244b78;
+}
+
+.mensaje-error {
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 7px;
+    background: #fdeaea;
+    color: #b42318;
+    font-size: 14px;
+    text-align: center;
+}
+
+.pie-login {
+    margin: 25px 0 0;
+    color: #8994a3;
+    font-size: 12px;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .contenedor-login {
+        padding: 30px 22px;
+    }
+}
+
+
+/* ============================= */
+/*       CARRITO DE PEDIDOS      */
+/* ============================= */
+
+.resumen-pedido {
+    margin-top: 25px;
+    padding: 20px;
+    background: #eef3f8;
+    border-radius: 8px;
+    text-align: right;
+}
+
+.resumen-pedido h3 {
+    margin: 0 0 10px;
+    color: #17365d;
+}
+
+.resumen-pedido h2 {
+    margin: 0;
+    color: #17365d;
+    font-size: 24px;
+}

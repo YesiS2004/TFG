@@ -1,0 +1,218 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}Gestión de turnos{% endblock %}
+
+{% block migas %}
+    Gestión de turnos
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenido">
+
+    <div class="encabezado">
+        <h1>Gestión de turnos</h1>
+
+        <a href="{% url 'registrar_turno' %}" class="boton">
+            + Nuevo turno
+        </a>
+    </div>
+
+    <form method="GET" class="filtros-reparaciones">
+
+        <div class="busqueda-reparaciones">
+            <input
+                type="text"
+                name="q"
+                placeholder="Buscar por cliente o vehículo..."
+                value="{{ busqueda }}"
+            >
+
+            <button type="submit" class="boton-buscar-reparacion">
+                Buscar
+            </button>
+        </div>
+
+        <select name="estado" class="select-estado-reparacion">
+            <option value="">Todos los estados</option>
+
+            {% for valor, etiqueta in estados %}
+                <option value="{{ valor }}"
+                    {% if estado_seleccionado == valor %}selected{% endif %}>
+                    {{ etiqueta }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="boton-filtrar-reparacion">
+            Filtrar
+        </button>
+
+        {% if busqueda or estado_seleccionado %}
+            <a href="{% url 'lista_turnos' %}"
+               class="boton-limpiar-reparacion">
+                Limpiar
+            </a>
+        {% endif %}
+
+    </form>
+
+    <div class="tabla-contenedor">
+
+        <table class="tabla">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Vehículo</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Comentarios</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for turno in pagina %}
+
+                    <tr>
+                        <td>{{ turno.id_turno }}</td>
+
+                        <td>
+                            {% if turno.cliente %}
+                                {{ turno.cliente.nombre }}
+                                {{ turno.cliente.apellido }}
+                            {% else %}
+                                Sin cliente asignado
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ turno.reparacion.vehiculo.matricula }}
+                            - {{ turno.reparacion.vehiculo.modelo }}
+                        </td>
+
+                        <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+
+                        <td>{{ turno.hora|time:"H:i" }}</td>
+
+                        <td>
+                            {% if turno.comentarios %}
+                                {{ turno.comentarios|truncatechars:40 }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>{{ turno.estado }}</td>
+
+                        <td>
+                            <a href="{% url 'editar_turno' turno.id_turno %}"
+                               class="boton">
+                                Editar
+                            </a>
+
+                            <button type="button"
+                                    class="boton"
+                                    onclick="abrirModal({{ turno.id_turno }})">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="8" class="vacio">
+                            No hay turnos registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- Paginación -->
+
+    {% if pagina.has_other_pages %}
+
+        <div class="paginacion">
+
+            {% if pagina.has_previous %}
+                <a href="?page={{ pagina.previous_page_number }}&q={{ busqueda|urlencode }}&estado={{ estado_seleccionado|urlencode }}">
+                    Anterior
+                </a>
+            {% endif %}
+
+            <span>
+                Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}
+            </span>
+
+            {% if pagina.has_next %}
+                <a href="?page={{ pagina.next_page_number }}&q={{ busqueda|urlencode }}&estado={{ estado_seleccionado|urlencode }}">
+                    Siguiente
+                </a>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- Modal de eliminación -->
+
+<div id="modalEliminar" class="modal">
+
+    <div class="modal-contenido">
+
+        <h3>Eliminar turno</h3>
+
+        <p>¿Estás segura de que deseas eliminar este turno?</p>
+
+        <form id="formularioEliminar" method="POST">
+            {% csrf_token %}
+
+            <div class="acciones-formulario">
+
+                <button type="button" class="boton"
+                        onclick="cerrarModal()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="boton">
+                    Eliminar
+                </button>
+
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+    function abrirModal(id) {
+        const modal = document.getElementById('modalEliminar');
+        const formulario = document.getElementById('formularioEliminar');
+
+        formulario.action = `/turnos/eliminar/${id}/`;
+        modal.style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEliminar').style.display = 'none';
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,440 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}
+    {% if reparacion %}Editar reparación{% else %}Nueva reparación{% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenido">
+
+    <div class="encabezado">
+        <h2>
+            {% if reparacion %}Editar reparación{% else %}Registrar reparación{% endif %}
+        </h2>
+
+        <div class="acciones-tabla">
+            <a href="{% url 'home' %}" class="boton">Inicio</a>
+            <a href="{% url 'lista_reparaciones' %}" class="boton">Volver</a>
+        </div>
+    </div>
+
+    <div class="formulario-contenedor formulario-reparacion">
+
+        <form method="POST" id="formReparacion">
+            {% csrf_token %}
+
+            {% if formulario.non_field_errors %}
+                <div class="error-formulario">
+                    {{ formulario.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <h3 class="titulo-seccion-carrito">Datos de la reparación</h3>
+
+            <div class="grupo-formulario">
+                <label>Vehículo</label>
+                {{ formulario.vehiculo }}
+                {{ formulario.vehiculo.errors }}
+            </div>
+
+            <div class="grupo-formulario">
+                <label>Descripción / observaciones</label>
+                {{ formulario.descripcion }}
+                {{ formulario.descripcion.errors }}
+            </div>
+
+            <div class="grupo-formulario">
+                <label>Estado</label>
+                {{ formulario.estado }}
+                {{ formulario.estado.errors }}
+            </div>
+
+            <div class="seccion-carrito">
+
+                <h3 class="titulo-seccion-carrito">Servicios</h3>
+
+                <div class="agregar-producto">
+                    <select id="seleccionarServicio" class="campo-formulario">
+                        <option value="">Seleccionar servicio...</option>
+                        {% for servicio in servicios_disponibles %}
+                            <option value="{{ servicio.id }}">
+                                {{ servicio.nombre }} - G. {{ servicio.costo }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="button" class="boton boton-agregar"
+                            onclick="agregarServicio()">
+                        + Agregar
+                    </button>
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table class="tabla tabla-carrito">
+                        <thead>
+                            <tr>
+                                <th>Servicio</th>
+                                <th>Precio</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaServicios">
+                            <tr>
+                                <td colspan="3" class="vacio">
+                                    No hay servicios agregados.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="seccion-carrito">
+
+                <h3 class="titulo-seccion-carrito">Repuestos</h3>
+
+                <div class="agregar-producto agregar-repuesto">
+
+                    <select id="seleccionarRepuesto" class="campo-formulario">
+                        <option value="">Seleccionar repuesto...</option>
+                        {% for repuesto in repuestos_disponibles %}
+                            <option value="{{ repuesto.id }}">
+                                {{ repuesto.nombre }} - G. {{ repuesto.costo }}
+                                (Stock: {{ repuesto.stock }})
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <input
+                        type="number"
+                        id="cantidadRepuesto"
+                        class="campo-formulario"
+                        min="1"
+                        value="1"
+                        placeholder="Cantidad"
+                    >
+
+                    <button type="button" class="boton boton-agregar"
+                            onclick="agregarRepuesto()">
+                        + Agregar
+                    </button>
+
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table class="tabla tabla-carrito">
+                        <thead>
+                            <tr>
+                                <th>Repuesto</th>
+                                <th>Precio unitario</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaRepuestos">
+                            <tr>
+                                <td colspan="5" class="vacio">
+                                    No hay repuestos agregados.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            {{ formulario.servicios_data }}
+            {{ formulario.repuestos_data }}
+
+            <div class="resumen-carrito">
+                <h3>Resumen de la reparación</h3>
+
+                <div class="resumen-linea">
+                    <span>Subtotal de servicios:</span>
+                    <strong id="subtotalServicios">G. 0</strong>
+                </div>
+
+                <div class="resumen-linea">
+                    <span>Subtotal de repuestos:</span>
+                    <strong id="subtotalRepuestos">G. 0</strong>
+                </div>
+
+                <div class="resumen-total">
+                    <span>Total:</span>
+                    <strong id="totalReparacion">G. 0</strong>
+                </div>
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% url 'lista_reparaciones' %}" class="boton">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="boton guardar">
+                    {% if reparacion %}Guardar cambios{% else %}Registrar reparación{% endif %}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{{ servicios_disponibles|json_script:"datos-servicios" }}
+{{ repuestos_disponibles|json_script:"datos-repuestos" }}
+{{ carrito_servicios|json_script:"servicios-iniciales" }}
+{{ carrito_repuestos|json_script:"repuestos-iniciales" }}
+
+<script>
+    const serviciosDisponibles = JSON.parse(
+        document.getElementById('datos-servicios').textContent
+    );
+
+    const repuestosDisponibles = JSON.parse(
+        document.getElementById('datos-repuestos').textContent
+    );
+
+    const serviciosIniciales = JSON.parse(
+        document.getElementById('servicios-iniciales').textContent
+    );
+
+    const repuestosIniciales = JSON.parse(
+        document.getElementById('repuestos-iniciales').textContent
+    );
+
+    let carritoServicios = [];
+    let carritoRepuestos = [];
+
+    const formatoMoneda = valor =>
+        'G. ' + Number(valor).toLocaleString('es-PY');
+
+    function escaparHTML(texto) {
+        return String(texto).replace(/[&<>"']/g, caracter => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        })[caracter]);
+    }
+
+    // Recuperar servicios anteriores o enviados en el formulario.
+    serviciosIniciales.forEach(item => {
+        const id = typeof item === 'object' ? item.id : item;
+        const servicio = serviciosDisponibles.find(s => s.id == id);
+
+        if (servicio) {
+            carritoServicios.push({...servicio});
+        }
+    });
+
+    // Recuperar repuestos anteriores o enviados en el formulario.
+    repuestosIniciales.forEach(item => {
+        const repuesto = repuestosDisponibles.find(r => r.id == item.id);
+
+        if (repuesto) {
+            carritoRepuestos.push({
+                ...repuesto,
+                cantidad: Number(item.cantidad) || 1
+            });
+        }
+    });
+
+    function agregarServicio() {
+        const id = document.getElementById('seleccionarServicio').value;
+
+        if (!id) {
+            alert('Selecciona un servicio.');
+            return;
+        }
+
+        if (carritoServicios.some(s => s.id == id)) {
+            alert('Este servicio ya está agregado.');
+            return;
+        }
+
+        const servicio = serviciosDisponibles.find(s => s.id == id);
+
+        if (!servicio) return;
+
+        carritoServicios.push({...servicio});
+
+        document.getElementById('seleccionarServicio').value = '';
+
+        actualizarCarrito();
+    }
+
+    function agregarRepuesto() {
+        const id = document.getElementById('seleccionarRepuesto').value;
+        const cantidad = Number(
+            document.getElementById('cantidadRepuesto').value
+        );
+
+        if (!id) {
+            alert('Selecciona un repuesto.');
+            return;
+        }
+
+        if (!Number.isInteger(cantidad) || cantidad < 1) {
+            alert('Ingresa una cantidad válida.');
+            return;
+        }
+
+        const repuesto = repuestosDisponibles.find(r => r.id == id);
+
+        if (!repuesto) return;
+
+        const existente = carritoRepuestos.find(r => r.id == id);
+        const cantidadActual = existente ? existente.cantidad : 0;
+
+        if (cantidadActual + cantidad > repuesto.stock) {
+            alert('Stock insuficiente. Disponible: ' + repuesto.stock);
+            return;
+        }
+
+        if (existente) {
+            existente.cantidad += cantidad;
+        } else {
+            carritoRepuestos.push({
+                ...repuesto,
+                cantidad: cantidad
+            });
+        }
+
+        document.getElementById('seleccionarRepuesto').value = '';
+        document.getElementById('cantidadRepuesto').value = 1;
+
+        actualizarCarrito();
+    }
+
+    function quitarServicio(id) {
+        carritoServicios = carritoServicios.filter(s => s.id != id);
+        actualizarCarrito();
+    }
+
+    function quitarRepuesto(id) {
+        carritoRepuestos = carritoRepuestos.filter(r => r.id != id);
+        actualizarCarrito();
+    }
+
+    function cambiarCantidad(id, cantidad) {
+        const repuesto = carritoRepuestos.find(r => r.id == id);
+        const disponible = repuestosDisponibles.find(r => r.id == id);
+
+        if (!repuesto || !disponible) return;
+
+        cantidad = Number(cantidad);
+
+        if (!Number.isInteger(cantidad) || cantidad < 1 ||
+            cantidad > disponible.stock) {
+            alert('Cantidad no válida. Stock disponible: ' + disponible.stock);
+            actualizarCarrito();
+            return;
+        }
+
+        repuesto.cantidad = cantidad;
+        actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+
+        const listaServicios = document.getElementById('listaServicios');
+        const listaRepuestos = document.getElementById('listaRepuestos');
+
+        let subtotalServicios = 0;
+        let subtotalRepuestos = 0;
+
+        if (carritoServicios.length) {
+            listaServicios.innerHTML = carritoServicios.map(servicio => {
+                subtotalServicios += Number(servicio.costo);
+
+                return `
+                    <tr>
+                        <td>${escaparHTML(servicio.nombre)}</td>
+                        <td>${formatoMoneda(servicio.costo)}</td>
+                        <td>
+                            <button type="button"
+                                class="boton-quitar"
+                                onclick="quitarServicio(${servicio.id})">
+                                Quitar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            listaServicios.innerHTML = `
+                <tr><td colspan="3" class="vacio">
+                    No hay servicios agregados.
+                </td></tr>
+            `;
+        }
+
+        if (carritoRepuestos.length) {
+            listaRepuestos.innerHTML = carritoRepuestos.map(repuesto => {
+                const subtotal = Number(repuesto.costo) * repuesto.cantidad;
+                subtotalRepuestos += subtotal;
+
+                return `
+                    <tr>
+                        <td>${escaparHTML(repuesto.nombre)}</td>
+                        <td>${formatoMoneda(repuesto.costo)}</td>
+                        <td>
+                            <input type="number"
+                                class="cantidad-carrito"
+                                min="1"
+                                max="${repuesto.stock}"
+                                value="${repuesto.cantidad}"
+                                onchange="cambiarCantidad(${repuesto.id}, this.value)">
+                        </td>
+                        <td>${formatoMoneda(subtotal)}</td>
+                        <td>
+                            <button type="button"
+                                class="boton-quitar"
+                                onclick="quitarRepuesto(${repuesto.id})">
+                                Quitar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            listaRepuestos.innerHTML = `
+                <tr><td colspan="5" class="vacio">
+                    No hay repuestos agregados.
+                </td></tr>
+            `;
+        }
+
+        const total = subtotalServicios + subtotalRepuestos;
+
+        document.getElementById('subtotalServicios').textContent =
+            formatoMoneda(subtotalServicios);
+
+        document.getElementById('subtotalRepuestos').textContent =
+            formatoMoneda(subtotalRepuestos);
+
+        document.getElementById('totalReparacion').textContent =
+            formatoMoneda(total);
+
+        document.getElementById('id_servicios_data').value =
+            JSON.stringify(carritoServicios.map(s => s.id));
+
+        document.getElementById('id_repuestos_data').value =
+            JSON.stringify(carritoRepuestos.map(r => ({
+                id: r.id,
+                cantidad: r.cantidad
+            })));
+    }
+
+    document.getElementById('formReparacion').addEventListener('submit', function(event) {
+        actualizarCarrito();
+    });
+
+    actualizarCarrito();
+</script>
+
+{% endblock %}

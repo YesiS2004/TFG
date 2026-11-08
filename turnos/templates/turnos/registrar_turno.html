@@ -1,0 +1,108 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}
+    {% if turno %}Editar turno{% else %}Registrar turno{% endif %}
+{% endblock %}
+
+{% block migas %}
+    <a href="{% url 'lista_turnos' %}">Gestión de turnos</a>
+    / {% if turno %}Editar turno{% else %}Registrar turno{% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenido">
+
+    <div class="encabezado">
+        <h1>
+            {% if turno %}
+                Editar turno
+            {% else %}
+                Registrar turno
+            {% endif %}
+        </h1>
+    </div>
+
+    <div class="formulario-contenedor">
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if formulario.non_field_errors %}
+                <div class="mensaje-error">
+                    {{ formulario.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.cliente.id_for_label }}">
+                    Cliente
+                </label>
+                {{ formulario.cliente }}
+                {{ formulario.cliente.errors }}
+            </div>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.reparacion.id_for_label }}">
+                    Reparación
+                </label>
+                {{ formulario.reparacion }}
+                {{ formulario.reparacion.errors }}
+            </div>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.fecha.id_for_label }}">
+                    Fecha del turno
+                </label>
+                {{ formulario.fecha }}
+                {{ formulario.fecha.errors }}
+            </div>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.hora.id_for_label }}">
+                    Hora del turno
+                </label>
+                {{ formulario.hora }}
+                {{ formulario.hora.errors }}
+            </div>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.comentarios.id_for_label }}">
+                    Comentarios
+                </label>
+                {{ formulario.comentarios }}
+                {{ formulario.comentarios.errors }}
+            </div>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.estado.id_for_label }}">
+                    Estado
+                </label>
+                {{ formulario.estado }}
+                {{ formulario.estado.errors }}
+            </div>
+
+            <div class="acciones-formulario">
+
+                <a href="{% url 'lista_turnos' %}" class="boton">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="boton">
+                    {% if turno %}
+                        Guardar cambios
+                    {% else %}
+                        Registrar turno
+                    {% endif %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

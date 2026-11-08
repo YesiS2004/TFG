@@ -1,35 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
 </head>
 
-<body>
+<body class="pagina-login">
 
-    <h1>Iniciar sesión</h1>
+    <div class="contenedor-login">
 
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
+        <div class="encabezado-login">
 
-    <form method="POST">
+            <h1>Bienvenido</h1>
+            <p>Ingresá tus datos para acceder al sistema</p>
+        </div>
 
-        {% csrf_token %}
+        {% if error %}
+            <div class="mensaje-error">
+                {{ error }}
+            </div>
+        {% endif %}
 
-        <label for="usuario">Usuario:</label>
-        <input type="text" id="usuario" name="usuario" required>
+        <form method="POST" class="formulario-login">
+            {% csrf_token %}
 
-        <br><br>
+            <div class="campo-login">
+                <label for="usuario">Usuario</label>
+                <input type="text" id="usuario" name="usuario"
+                       placeholder="Ingresá tu usuario" required>
+            </div>
 
-        <label for="contraseña">Contraseña:</label>
-        <input type="password" id="contraseña" name="contraseña" required>
+            <div class="campo-login">
+                <label for="contraseña">Contraseña</label>
+                <input type="password" id="contraseña" name="contraseña"
+                       placeholder="Ingresá tu contraseña" required>
+            </div>
 
-        <br><br>
+            <button type="submit" class="boton-login">
+                Ingresar
+            </button>
+        </form>
 
-        <button type="submit">Ingresar</button>
+        <p class="pie-login">Sistema de gestión de talleres mecánicos</p>
 
-    </form>
+    </div>
 
 </body>
 </html>

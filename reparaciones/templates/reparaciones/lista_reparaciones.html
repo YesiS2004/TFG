@@ -1,0 +1,224 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}Reparaciones{% endblock %}
+
+{% block migas %}
+    <span>Reparaciones</span>
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenido">
+
+    <div class="encabezado">
+        <h2>Gestión de reparaciones</h2>
+
+        <a href="{% url 'registrar_reparacion' %}" class="boton nuevo">
+            + Nueva reparación
+        </a>
+    </div>
+
+    
+<form method="GET" class="filtros-reparaciones">
+
+    <div class="busqueda-reparaciones">
+        <input
+            type="text"
+            name="q"
+            placeholder="Buscar por cliente o vehículo..."
+            value="{{ busqueda }}"
+        >
+
+        <button type="submit" class="boton-buscar-reparacion" title="Buscar">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+
+    <select name="estado" class="select-estado-reparacion">
+        <option value="">Todos los estados</option>
+
+        {% for valor, etiqueta in estados %}
+            <option value="{{ valor }}"
+                {% if estado_seleccionado == valor %}selected{% endif %}>
+                {{ etiqueta }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="boton-filtrar-reparacion">
+        Filtrar
+    </button>
+
+    {% if busqueda or estado_seleccionado %}
+        <a href="{% url 'lista_reparaciones' %}"
+           class="boton-limpiar-reparacion">
+            Limpiar
+        </a>
+    {% endif %}
+
+</form>
+
+
+    <div class="tabla-contenedor">
+
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>N.º</th>
+                    <th>Cliente</th>
+                    <th>Vehículo</th>
+                    <th>Descripción</th>
+                    <th>Repuestos</th>
+                    <th>Servicios</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for reparacion in pagina %}
+                    <tr>
+                        <td>{{ reparacion.id_reparacion }}</td>
+
+                        <td>
+                            {{ reparacion.vehiculo.cliente }}
+                        </td>
+
+                        <td>
+                            {{ reparacion.vehiculo.matricula }}
+                            <br>
+                            {{ reparacion.vehiculo.modelo }}
+                        </td>
+
+                        <td>
+                            {{ reparacion.descripcion|default:"Sin descripción"|truncatechars:50 }}
+                        </td>
+
+                        <td>
+                            {% for relacion in reparacion.repuestos_utilizados.all %}
+                                {{ relacion.repuesto.nombre_pieza }} ({{ relacion.cantidad }}){% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                -
+                            {% endfor %}
+                        </td>
+
+                        <td>
+                            {% for relacion in reparacion.servicios_realizados.all %}
+                                {{ relacion.servicio.nombre }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                -
+                            {% endfor %}
+                        </td>
+
+                        <td>{{ reparacion.get_estado_display }}</td>
+
+                        <td>
+                            <div class="acciones-tabla">
+
+                                <a
+                                    href="{% url 'editar_reparacion' reparacion.id_reparacion %}"
+                                    class="boton editar">
+                                    Editar
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="boton eliminar"
+                                    onclick="abrirModal('{{ reparacion.id_reparacion }}')">
+                                    Eliminar
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="vacio">
+                            No se encontraron reparaciones registradas.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    {% if pagina.has_other_pages %}
+        <div class="paginacion">
+
+            {% if pagina.has_previous %}
+                <a href="?q={{ busqueda|urlencode }}&estado={{ estado_seleccionado|urlencode }}&page={{ pagina.previous_page_number }}"
+                   class="pagina">
+                    Anterior
+                </a>
+            {% endif %}
+
+            <span class="pagina">
+                Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}
+            </span>
+
+            {% if pagina.has_next %}
+                <a href="?q={{ busqueda|urlencode }}&estado={{ estado_seleccionado|urlencode }}&page={{ pagina.next_page_number }}"
+                   class="pagina">
+                    Siguiente
+                </a>
+            {% endif %}
+
+        </div>
+    {% endif %}
+
+</div>
+
+
+<!-- Modal para eliminar -->
+<div id="modalEliminar" class="modal">
+    <div class="modal-contenido">
+
+        <h3>Eliminar reparación</h3>
+
+        <p>¿Estás segura de que deseas eliminar esta reparación?</p>
+
+        <div class="acciones-formulario">
+
+            <button type="button" class="boton" onclick="cerrarModal()">
+                Cancelar
+            </button>
+
+            <form id="formEliminar" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="boton eliminar">
+                    Eliminar
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    function abrirModal(id) {
+        const modal = document.getElementById('modalEliminar');
+        const formulario = document.getElementById('formEliminar');
+
+        formulario.action = `/reparaciones/eliminar/${id}/`;
+        modal.style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEliminar').style.display = 'none';
+    }
+
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('modalEliminar');
+
+        if (event.target === modal) {
+            cerrarModal();
+        }
+    });
+</script>
+
+{% endblock %}

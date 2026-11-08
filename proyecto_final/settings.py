@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'caracteristicas_vehiculos',
     'repuestos',
     'vehiculos',
+    'reparaciones',
+    'turnos',
+    'pedidos',
 ]
 
 MIDDLEWARE = [

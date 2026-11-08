@@ -1,0 +1,429 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}
+    {% if pedido %}Editar pedido{% else %}Registrar pedido{% endif %}
+{% endblock %}
+
+{% block migas %}
+    <a href="{% url 'lista_pedidos' %}">Gestión de pedidos</a>
+    / {% if pedido %}Editar pedido{% else %}Registrar pedido{% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenido">
+
+    <div class="encabezado">
+        <h1>
+            {% if pedido %}
+                Editar pedido
+            {% else %}
+                Registrar pedido
+            {% endif %}
+        </h1>
+    </div>
+
+    <div class="formulario-contenedor">
+
+        <form method="POST" id="formularioPedido">
+            {% csrf_token %}
+
+            {{ formulario.repuestos_data }}
+
+            {% if formulario.non_field_errors %}
+                <div class="mensaje-error">
+                    {{ formulario.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- Datos del pedido -->
+
+            <h3>Datos del pedido</h3>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.proveedor.id_for_label }}">
+                    Proveedor
+                </label>
+                {{ formulario.proveedor }}
+                {{ formulario.proveedor.errors }}
+            </div>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.fecha_pedido.id_for_label }}">
+                    Fecha del pedido
+                </label>
+                {{ formulario.fecha_pedido }}
+                {{ formulario.fecha_pedido.errors }}
+            </div>
+
+            <div class="campo-formulario">
+                <label for="{{ formulario.estado.id_for_label }}">
+                    Estado
+                </label>
+                {{ formulario.estado }}
+                {{ formulario.estado.errors }}
+            </div>
+
+            <hr>
+
+            <!-- Agregar repuestos -->
+
+            <h3>Agregar repuestos</h3>
+
+            <div class="campo-formulario">
+                <label for="seleccionarRepuesto">
+                    Seleccionar repuesto
+                </label>
+
+                <select id="seleccionarRepuesto" class="campo-formulario">
+                    <option value="">Seleccione un repuesto</option>
+
+                    {% for repuesto in repuestos_disponibles %}
+                        <option value="{{ repuesto.id }}">
+                            {{ repuesto.nombre }} - Gs.
+                            {{ repuesto.costo }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="cantidadRepuesto">
+                    Cantidad
+                </label>
+
+                <input
+                    type="number"
+                    id="cantidadRepuesto"
+                    class="campo-formulario"
+                    min="1"
+                    value="1"
+                >
+            </div>
+
+            <button type="button" class="boton" onclick="agregarRepuesto()">
+                + Agregar al carrito
+            </button>
+
+            <br><br>
+
+            <!-- Carrito -->
+
+            <h3>Repuestos del pedido</h3>
+
+            <div class="tabla-contenedor">
+
+                <table class="tabla">
+
+                    <thead>
+                        <tr>
+                            <th>Repuesto</th>
+                            <th>Precio unitario</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tablaCarrito">
+
+                        <tr>
+                            <td colspan="5" class="vacio">
+                                No hay repuestos agregados.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Total -->
+
+            <div class="resumen-pedido">
+                <h3>Total del pedido</h3>
+                <h2 id="totalPedido">Gs. 0</h2>
+            </div>
+
+            <div class="acciones-formulario">
+
+                <a href="{% url 'lista_pedidos' %}" class="boton">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="boton">
+                    {% if pedido %}
+                        Guardar cambios
+                    {% else %}
+                        Registrar pedido
+                    {% endif %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Datos para JavaScript -->
+
+{{ repuestos_disponibles|json_script:"repuestos-disponibles" }}
+{{ carrito_repuestos|json_script:"carrito-inicial" }}
+
+
+<script>
+
+    const repuestosDisponibles = JSON.parse(
+        document.getElementById('repuestos-disponibles').textContent
+    );
+
+    const carritoInicial = JSON.parse(
+        document.getElementById('carrito-inicial').textContent
+    );
+
+    let carrito = [];
+
+    const formatoGuaranies = new Intl.NumberFormat('es-PY');
+
+    function formatearPrecio(valor) {
+        return 'Gs. ' + formatoGuaranies.format(valor);
+    }
+
+    function cargarCarritoInicial() {
+
+        carritoInicial.forEach(item => {
+
+            const id = Number(
+                typeof item === 'object' ? item.id : item
+            );
+
+            const repuesto = repuestosDisponibles.find(
+                r => Number(r.id) === id
+            );
+
+            if (!repuesto) return;
+
+            const cantidad = Number(
+                typeof item === 'object' ? item.cantidad : 1
+            );
+
+            if (!Number.isInteger(cantidad) || cantidad < 1) return;
+
+            carrito.push({
+                id: repuesto.id,
+                nombre: repuesto.nombre,
+                costo: Number(repuesto.costo),
+                cantidad: cantidad
+            });
+
+        });
+
+    }
+
+
+    function agregarRepuesto() {
+
+        const selector = document.getElementById('seleccionarRepuesto');
+        const cantidadInput = document.getElementById('cantidadRepuesto');
+
+        const id = Number(selector.value);
+        const cantidad = Number(cantidadInput.value);
+
+        if (!selector.value) {
+            alert('Seleccione un repuesto.');
+            return;
+        }
+
+        if (!Number.isInteger(cantidad) || cantidad < 1) {
+            alert('Ingrese una cantidad válida.');
+            return;
+        }
+
+        const repuesto = repuestosDisponibles.find(
+            r => Number(r.id) === id
+        );
+
+        if (!repuesto) return;
+
+        const existente = carrito.find(
+            item => Number(item.id) === id
+        );
+
+        if (existente) {
+
+            existente.cantidad += cantidad;
+
+        } else {
+
+            carrito.push({
+                id: repuesto.id,
+                nombre: repuesto.nombre,
+                costo: Number(repuesto.costo),
+                cantidad: cantidad
+            });
+
+        }
+
+        selector.value = '';
+        cantidadInput.value = 1;
+
+        actualizarCarrito();
+    }
+
+
+    function cambiarCantidad(id, valor) {
+
+        const cantidad = Number(valor);
+
+        if (!Number.isInteger(cantidad) || cantidad < 1) {
+            renderizarCarrito();
+            return;
+        }
+
+        const repuesto = carrito.find(
+            item => Number(item.id) === Number(id)
+        );
+
+        if (repuesto) {
+            repuesto.cantidad = cantidad;
+        }
+
+        actualizarCarrito();
+    }
+
+
+    function eliminarRepuesto(id) {
+
+        carrito = carrito.filter(
+            item => Number(item.id) !== Number(id)
+        );
+
+        actualizarCarrito();
+    }
+
+
+    function actualizarCarrito() {
+
+        renderizarCarrito();
+
+        document.getElementById('id_repuestos_data').value =
+            JSON.stringify(
+                carrito.map(item => ({
+                    id: item.id,
+                    cantidad: item.cantidad
+                }))
+            );
+
+    }
+
+
+    function renderizarCarrito() {
+
+        const tabla = document.getElementById('tablaCarrito');
+
+        tabla.innerHTML = '';
+
+        let total = 0;
+
+        if (carrito.length === 0) {
+
+            const fila = document.createElement('tr');
+            const celda = document.createElement('td');
+
+            celda.colSpan = 5;
+            celda.className = 'vacio';
+            celda.textContent = 'No hay repuestos agregados.';
+
+            fila.appendChild(celda);
+            tabla.appendChild(fila);
+
+        }
+
+        carrito.forEach(item => {
+
+            const subtotal = item.costo * item.cantidad;
+
+            total += subtotal;
+
+            const fila = document.createElement('tr');
+
+            const nombre = document.createElement('td');
+            nombre.textContent = item.nombre;
+
+            const precio = document.createElement('td');
+            precio.textContent = formatearPrecio(item.costo);
+
+            const cantidad = document.createElement('td');
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = '1';
+            input.value = item.cantidad;
+            input.className = 'campo-formulario';
+            input.style.width = '80px';
+
+            input.addEventListener('change', function() {
+                cambiarCantidad(item.id, this.value);
+            });
+
+            cantidad.appendChild(input);
+
+            const celdaSubtotal = document.createElement('td');
+            celdaSubtotal.textContent = formatearPrecio(subtotal);
+
+            const acciones = document.createElement('td');
+
+            const boton = document.createElement('button');
+            boton.type = 'button';
+            boton.className = 'boton';
+            boton.textContent = 'Quitar';
+
+            boton.addEventListener('click', function() {
+                eliminarRepuesto(item.id);
+            });
+
+            acciones.appendChild(boton);
+
+            fila.appendChild(nombre);
+            fila.appendChild(precio);
+            fila.appendChild(cantidad);
+            fila.appendChild(celdaSubtotal);
+            fila.appendChild(acciones);
+
+            tabla.appendChild(fila);
+
+        });
+
+        document.getElementById('totalPedido').textContent =
+            formatearPrecio(total);
+
+    }
+
+
+    document.getElementById('formularioPedido').addEventListener(
+        'submit',
+        function(event) {
+
+            if (carrito.length === 0) {
+                event.preventDefault();
+                alert('Agregue al menos un repuesto al pedido.');
+                return;
+            }
+
+            actualizarCarrito();
+
+        }
+    );
+
+
+    cargarCarritoInicial();
+    actualizarCarrito();
+
+</script>
+
+{% endblock %}
